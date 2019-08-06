@@ -11,6 +11,7 @@
 #include <iostream>
 #include <memory>
 #include <type_traits>
+#include <array>
 
 struct ClassType;
 namespace at {
@@ -1429,6 +1430,13 @@ struct getTypePtr_<c10::ArrayRef<T>> final {
 };
 template <class T>
 struct getTypePtr_<c10::List<T>> final {
+  static TypePtr call() {
+    static auto type = ListType::create(getTypePtr_<T>::call());
+    return type;
+  }
+};
+template <class T, size_t N>
+struct getTypePtr_<std::array<T, N>> final {
   static TypePtr call() {
     static auto type = ListType::create(getTypePtr_<T>::call());
     return type;
